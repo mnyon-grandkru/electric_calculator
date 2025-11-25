@@ -113,7 +113,7 @@ If using the root domain like `yourdomain.com`:
    - **Type**: `A`
    - **Value**: `185.199.108.153`
    - **TTL**: `3600`
-   
+
    Repeat for these IPs:
    - `185.199.109.153`
    - `185.199.110.153`
@@ -201,11 +201,11 @@ GitHub automatically provisions SSL certificates for custom domains:
 ### Custom domain not working
 - **DNS not propagated**: Wait up to 48 hours (usually 5-60 minutes)
 - **Wrong DNS record type**: Verify CNAME for subdomain or A records for root domain
-- **GitHub Pages not recognizing domain**: 
+- **GitHub Pages not recognizing domain**:
   - Check domain is entered correctly in Settings → Pages
   - Ensure DNS records point to correct GitHub Pages address
   - Wait for DNS propagation to complete
-- **SSL certificate issues**: 
+- **SSL certificate issues**:
   - Wait for GitHub to provision certificate (can take hours)
   - Ensure domain is verified in GitHub Pages settings
   - Check that DNS records are correct

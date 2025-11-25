@@ -17,20 +17,21 @@ export function validateDevice(device: Partial<{
     const errors: Record<string, string> = {};
 
     // String field validations
-    if (device.name !== undefined) {
-        if (typeof device.name !== 'string') {
-            errors.name = 'Device name must be text';
-        } else if (device.name.trim() === '') {
-            errors.name = 'Device name is required';
-        }
+    // Required fields: name and address - always validate
+    if (device.name === undefined || device.name === null) {
+        errors.name = 'Device name is required';
+    } else if (typeof device.name !== 'string') {
+        errors.name = 'Device name must be text';
+    } else if (device.name.trim() === '') {
+        errors.name = 'Device name is required';
     }
 
-    if (device.address !== undefined) {
-        if (typeof device.address !== 'string') {
-            errors.address = 'Address must be text';
-        } else if (device.address.trim() === '') {
-            errors.address = 'Address is required';
-        }
+    if (device.address === undefined || device.address === null) {
+        errors.address = 'Address is required';
+    } else if (typeof device.address !== 'string') {
+        errors.address = 'Address must be text';
+    } else if (device.address.trim() === '') {
+        errors.address = 'Address is required';
     }
 
     if (device.description !== undefined && typeof device.description !== 'string') {
