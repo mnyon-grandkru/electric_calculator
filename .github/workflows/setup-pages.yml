@@ -1,0 +1,30 @@
+name: Setup GitHub Pages
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [setup-pages]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check GitHub Pages Status
+        run: |
+          echo "## GitHub Pages Setup Checklist" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Required Manual Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. ✅ Go to Settings → Pages" >> $GITHUB_STEP_SUMMARY
+          echo "2. ✅ Select Source: Deploy from a branch" >> $GITHUB_STEP_SUMMARY
+          echo "3. ✅ Select Branch: gh-pages" >> $GITHUB_STEP_SUMMARY
+          echo "4. ✅ Select Folder: / (root)" >> $GITHUB_STEP_SUMMARY
+          echo "5. ✅ Click Save" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### After Setup:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Your site will be available at:" >> $GITHUB_STEP_SUMMARY
+          echo "https://mnyon-grandkru.github.io/electric_calculator/" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note:** GitHub Pages source selection must be configured manually through the web UI." >> $GITHUB_STEP_SUMMARY
+
