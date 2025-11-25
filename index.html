@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Energy Cost Calculator</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="./src/styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LLM Energy Cost Calculator</h1>
+            <p class="subtitle">Compare electricity usage, energy cost, and carbon footprint</p>
+        </header>
+
+        <main>
+            <!-- Mobile Tab Switcher -->
+            <div class="mobile-tabs" role="tablist" aria-label="Device selection">
+                <button class="tab-button active" role="tab" aria-selected="true" aria-controls="qnap-panel" id="qnap-tab" data-device="qnap">
+                    QNAP Server
+                </button>
+                <button class="tab-button" role="tab" aria-selected="false" aria-controls="pc-panel" id="pc-tab" data-device="pc">
+                    PC
+                </button>
+            </div>
+
+            <!-- Device Cards Container -->
+            <div class="devices-container">
+                <!-- QNAP Server Card -->
+                <section class="device-card" id="qnap-panel" role="tabpanel" aria-labelledby="qnap-tab">
+                    <h2>QNAP Server</h2>
+                    <form class="device-form" data-device="qnap">
+                        <div class="form-group">
+                            <label for="qnap-name">Device Name <span class="required">*</span></label>
+                            <input type="text" id="qnap-name" name="name" required value="QNAP Server" aria-required="true">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-description">Description</label>
+                            <input type="text" id="qnap-description" name="description" value="QNAP TS-464eU – Compact 1U NAS">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-address">Address <span class="required">*</span></label>
+                            <input type="text" id="qnap-address" name="address" required value="1 Main St, White Plains, NY, USA" aria-required="true">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-cpu">CPU</label>
+                            <input type="text" id="qnap-cpu" name="cpu" value="Intel Celeron N5105 (4C/4T, 2.9 GHz)">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-gpu">GPU</label>
+                            <input type="text" id="qnap-gpu" name="gpu" value="None">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-ram">RAM/VRAM</label>
+                            <input type="text" id="qnap-ram" name="ram" value="8GB RAM">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-type">Device Type</label>
+                            <input type="text" id="qnap-type" name="type" value="Server/NAS" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-min-wattage">Min Wattage (W)</label>
+                            <input type="number" id="qnap-min-wattage" name="minWattage" step="0.1" min="0" max="2000" value="21.1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-max-wattage">Max Wattage (W)</label>
+                            <input type="number" id="qnap-max-wattage" name="maxWattage" step="0.1" min="0" max="2000" value="35.3" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-rate">Electricity Rate ($/kWh)</label>
+                            <input type="number" id="qnap-rate" name="rate" step="0.01" min="0" max="1" value="0.23" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qnap-carbon">Carbon Intensity (gCO₂/kWh)</label>
+                            <input type="number" id="qnap-carbon" name="carbon" step="0.1" min="0" value="185" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Map</label>
+                            <div id="qnap-map" class="map-container" aria-label="Map showing QNAP Server location"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="button" class="recalculate-button" id="qnap-recalculate" aria-label="Recalculate QNAP Server costs and energy usage">
+                                Recalculate
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="calculations" aria-live="polite" aria-atomic="true">
+                        <h3>Calculations</h3>
+                        <div class="calc-results" id="qnap-results"></div>
+                    </div>
+
+                    <div class="usage-calculator" aria-live="polite" aria-atomic="true">
+                        <h3>Usage Calculator</h3>
+                        <div class="form-group">
+                            <label for="qnap-usage-minutes">Usage Duration (minutes)</label>
+                            <input
+                                type="number"
+                                id="qnap-usage-minutes"
+                                name="usageMinutes"
+                                min="0"
+                                step="1"
+                                placeholder="Enter minutes"
+                                aria-label="Enter usage duration in minutes"
+                            >
+                        </div>
+                        <div class="usage-results" id="qnap-usage-results"></div>
+                    </div>
+                </section>
+
+                <!-- PC Card -->
+                <section class="device-card" id="pc-panel" role="tabpanel" aria-labelledby="pc-tab">
+                    <h2>PC</h2>
+                    <form class="device-form" data-device="pc">
+                        <div class="form-group">
+                            <label for="pc-name">Device Name <span class="required">*</span></label>
+                            <input type="text" id="pc-name" name="name" required value="PC" aria-required="true">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-description">Description</label>
+                            <input type="text" id="pc-description" name="description" value="Intel Core i7 Gaming PC, RTX GPU">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-address">Address <span class="required">*</span></label>
+                            <input type="text" id="pc-address" name="address" required value="123 Broad St, White Plains, NY, USA" aria-required="true">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-cpu">CPU</label>
+                            <input type="text" id="pc-cpu" name="cpu" value="Intel Core i7-13700K (8P+8E, up to 5.4 GHz)">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-gpu">GPU</label>
+                            <input type="text" id="pc-gpu" name="gpu" value="NVIDIA RTX 3070">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-ram">RAM/VRAM</label>
+                            <input type="text" id="pc-ram" name="ram" value="32GB RAM / 8GB VRAM">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-type">Device Type</label>
+                            <input type="text" id="pc-type" name="type" value="PC" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-min-wattage">Min Wattage (W)</label>
+                            <input type="number" id="pc-min-wattage" name="minWattage" step="0.1" min="0" max="2000" value="65" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-max-wattage">Max Wattage (W)</label>
+                            <input type="number" id="pc-max-wattage" name="maxWattage" step="0.1" min="0" max="2000" value="350" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-rate">Electricity Rate ($/kWh)</label>
+                            <input type="number" id="pc-rate" name="rate" step="0.01" min="0" max="1" value="0.23" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pc-carbon">Carbon Intensity (gCO₂/kWh)</label>
+                            <input type="number" id="pc-carbon" name="carbon" step="0.1" min="0" value="185" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Map</label>
+                            <div id="pc-map" class="map-container" aria-label="Map showing PC location"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="button" class="recalculate-button" id="pc-recalculate" aria-label="Recalculate PC costs and energy usage">
+                                Recalculate
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="calculations" aria-live="polite" aria-atomic="true">
+                        <h3>Calculations</h3>
+                        <div class="calc-results" id="pc-results"></div>
+                    </div>
+
+                    <div class="usage-calculator" aria-live="polite" aria-atomic="true">
+                        <h3>Usage Calculator</h3>
+                        <div class="form-group">
+                            <label for="pc-usage-minutes">Usage Duration (minutes)</label>
+                            <input
+                                type="number"
+                                id="pc-usage-minutes"
+                                name="usageMinutes"
+                                min="0"
+                                step="1"
+                                placeholder="Enter minutes"
+                                aria-label="Enter usage duration in minutes"
+                            >
+                        </div>
+                        <div class="usage-results" id="pc-usage-results"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Comparison Summary -->
+            <section class="comparison-summary" aria-live="polite" aria-atomic="true">
+                <h2>Comparison Summary</h2>
+                <div id="comparison-table"></div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
+
