@@ -1,6 +1,5 @@
 import type { Device } from './types';
 import { geocodeAddress } from './geocoding';
-import { updateMap } from './map';
 
 const DEFAULT_QNAP: Device = {
     name: 'QNAP Server',

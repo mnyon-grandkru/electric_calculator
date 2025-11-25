@@ -2,11 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { geocodeAddress } from './geocoding';
 
 // Mock fetch globally
-global.fetch = vi.fn();
+const globalFetch = globalThis.fetch;
 
 describe('geocodeAddress', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        // Restore original fetch
+        globalThis.fetch = globalFetch;
     });
 
     it('should geocode a valid address', async () => {
@@ -18,10 +20,10 @@ describe('geocodeAddress', () => {
             }
         ];
 
-        (global.fetch as any).mockResolvedValueOnce({
+        globalThis.fetch = vi.fn().mockResolvedValueOnce({
             ok: true,
             json: async () => mockResponse
-        });
+        }) as any;
 
         const result = await geocodeAddress('White Plains, NY, USA');
 
@@ -29,7 +31,7 @@ describe('geocodeAddress', () => {
             lat: 41.0340,
             lng: -73.7629
         });
-        expect(global.fetch).toHaveBeenCalledWith(
+        expect(globalThis.fetch).toHaveBeenCalledWith(
             expect.stringContaining('nominatim.openstreetmap.org'),
             expect.objectContaining({
                 headers: expect.objectContaining({
@@ -40,10 +42,10 @@ describe('geocodeAddress', () => {
     });
 
     it('should return null for invalid address', async () => {
-        (global.fetch as any).mockResolvedValueOnce({
+        globalThis.fetch = vi.fn().mockResolvedValueOnce({
             ok: true,
             json: async () => []
-        });
+        }) as any;
 
         const result = await geocodeAddress('Invalid Address XYZ123');
 
@@ -51,7 +53,7 @@ describe('geocodeAddress', () => {
     });
 
     it('should handle fetch errors', async () => {
-        (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+        globalThis.fetch = vi.fn().mockRejectedValueOnce(new Error('Network error')) as any;
 
         const result = await geocodeAddress('Test Address');
 
@@ -59,10 +61,10 @@ describe('geocodeAddress', () => {
     });
 
     it('should handle non-ok responses', async () => {
-        (global.fetch as any).mockResolvedValueOnce({
+        globalThis.fetch = vi.fn().mockResolvedValueOnce({
             ok: false,
             statusText: 'Not Found'
-        });
+        }) as any;
 
         const result = await geocodeAddress('Test Address');
 
